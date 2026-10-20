@@ -242,7 +242,7 @@ def test_log_loss(p_loss, H_with_logop, lattice, num_logops,xz_in_primal, N):
     lost_fusions_ixs = np.where(primal_outcomes)[0].astype(np.int32) # pick primal or dual
     # lost_fusions_ixs = np.where(dual_outcomes)[0].astype(np.int32) # pick primal or dual 
 
-    new_H_with_logop = LossDecoder_GaussElimin_noordered(H_with_logop, lost_fusions_ixs)
+    new_H_with_logop = LossDecoder_GaussElimin_noordered(H_with_logop, lost_fusions_ixs, num_logops)
     
     if np.any(new_H_with_logop[-num_logops:, lost_fusions_ixs]):
         return 1
