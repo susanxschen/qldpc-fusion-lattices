@@ -104,6 +104,9 @@ def sampling(p_loss, H_with_logop, lattice, xz_in_primal, N):
     # lattice is the class instance of the fusion network
     num_fusions = H_with_logop.shape[1]
     fusion_outcomes = random.choices(outcomes, weights=probabilities_std(p_loss,N), k=num_fusions) # sample based on standard RUS model weights
+
+    ### Comment out following if performing standard RUS simulations ###
+    
     fusion_outcomes_temp = [[i, j, 0, idx] for idx, (i, j) in enumerate(fusion_outcomes)] # this adds a temporal seen index and labels fusions
     fusions_list = lattice.lattice_fusions # list with detailed information of each fusion
     
@@ -218,6 +221,8 @@ def sampling(p_loss, H_with_logop, lattice, xz_in_primal, N):
 
     # get rid of other information, leave just fusion outcomes of initially sampled form
     improved_fusion_outcomes = [fusion[:2] for fusion in final_fusion_outcomes_temp]
+
+    ### Change improved_fusion_outcomes below to fusion_outcomes if doing standard RUS simulations ###
     
     primal_outcomes = []
     dual_outcomes = []
@@ -239,7 +244,7 @@ def test_log_loss(p_loss, H_with_logop, lattice, num_logops,xz_in_primal, N):
     lost_fusions_ixs = np.where(primal_outcomes)[0].astype(np.int32) # pick primal or dual
     # lost_fusions_ixs = np.where(dual_outcomes)[0].astype(np.int32) # pick primal or dual 
 
-    new_H_with_logop = LossDecoder_GaussElimin_noordered(H_with_logop, lost_fusions_ixs)
+    new_H_with_logop = LossDecoder_GaussElimin_noordered(H_with_logop, lost_fusions_ixs, num_logops)
     
     if np.any(new_H_with_logop[-num_logops:, lost_fusions_ixs]):
         return 1
@@ -270,7 +275,7 @@ def get_logerr_rate_parallel(loss_ps, H_with_logop, lattice, num_trials, num_log
 if __name__ == "__main__":
 
     p_list = np.linspace(0.001, 0.1, 15)
-    num_trials = 10000
+    num_trials = 5000
     N = 2 # repeat until success max tries
     fig, ax = plt.subplots()
     
